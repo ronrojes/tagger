@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catholic Tag Master v4.0</title>
+    <title>Catholic Tag Master v4.0 (Enhanced)</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f4f8; color: #2d3436; }
         .container { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -28,14 +28,13 @@
     <h2>Catholic Media Tag Master v4.0</h2>
 
     <div class="form-row">
-        <div><label>Program Name</label><input type="text" id="program" placeholder="e.g. Life of Prayer"></div>
-        <div><label>Episode Title</label><input type="text" id="episode" placeholder="e.g. Learning to Meditate"></div>
+        <div><label>Program Name</label><input type="text" id="program" placeholder="e.g. Life of Prayer?"></div>
+        <div><label>Episode Title</label><input type="text" id="episode" placeholder="e.g. Mary's "Yes""></div>
     </div>
 
     <div class="topic-box">
         <label>Additional Topics / Subjects (Comma separated)</label>
-        <input type="text" id="extraTopics" placeholder="e.g. Testimony, Eucharist, Forgiveness, Lent">
-        <div style="font-size: 0.75em; color: #999;">Type general topics here (e.g. confession, rosary, testimony).</div>
+        <input type="text" id="extraTopics" placeholder="e.g. Lent/Easter, St. Paul, Mercy!">
     </div>
 
     <div class="form-row">
@@ -63,11 +62,11 @@
         </div>
     </div>
 
-    <label>Names (One per line for Bulk Mode)</label>
+    <label>Names (One per line)</label>
     <textarea id="bulkNames" rows="3" placeholder="Enter Full Name(s)"></textarea>
 
-    <label>Religious Order (Applies to all names above)</label>
-    <input type="text" id="order" placeholder="e.g. SJ, OP, CMI">
+    <label>Religious Order</label>
+    <input type="text" id="order" placeholder="e.g. S.J., O.P.">
 
     <div class="btn-group">
         <button id="btnClear">RESET ALL</button>
@@ -86,10 +85,18 @@
         const btnClear = document.getElementById('btnClear');
         const btnCopy = document.getElementById('btnCopy');
 
+        // Clean version (alphanumeric and hyphens only)
         function slugify(text) {
             return text.trim().toLowerCase()
                 .replace(/\s+/g, '-')
                 .replace(/[^\w\-]+/g, '')
+                .replace(/\-\-+/g, '-');
+        }
+
+        // Special character version (keeps symbols, just replaces spaces with hyphens)
+        function preserveSpecial(text) {
+            return text.trim().toLowerCase()
+                .replace(/\s+/g, '-')
                 .replace(/\-\-+/g, '-');
         }
 
@@ -100,23 +107,34 @@
             const namesRaw = document.getElementById('bulkNames').value.split('\n');
             const mainTitle = document.getElementById('mainTitle').value;
             const extraTitle = document.getElementById('extraTitle').value;
-            const globalOrder = document.getElementById('order').value.trim().toUpperCase();
+            const globalOrder = document.getElementById('order').value.trim();
 
             let finalTags = [];
 
-            // 1. Program, Episode, and General Topics
-            if (program) finalTags.push(slugify(program));
-            if (episode) finalTags.push(slugify(episode));
+            function addDualTags(val) {
+                if(!val.trim()) return;
+                finalTags.push(slugify(val));
+                finalTags.push(preserveSpecial(val));
+            }
+
+            // 1. Program & Episode
+            if (program) addDualTags(program);
+            if (episode) addDualTags(episode);
+
+            // 2. General Topics
             topics.forEach(t => {
-                if(t.trim()) finalTags.push(slugify(t));
+                if(t.trim()) addDualTags(t);
             });
 
-            // 2. Names Processing
+            // 3. Names Processing
             namesRaw.forEach(nameLine => {
                 let name = nameLine.trim();
                 if (!name) return;
+
                 let nameSlug = slugify(name);
+                let nameSpec = preserveSpecial(name);
                 let last = name.split(" ").pop();
+                let lastSlug = slugify(last);
 
                 let titles = [];
                 if (mainTitle === 'priest') titles = ['Father', 'Fr'];
@@ -132,32 +150,45 @@
                 if (extraTitle === 'dr') extras = ['Dr', 'Doctor'];
                 else if (extraTitle === 'churchdoc') extras = ['Doctor-of-the-Church'];
 
-                // Base tags
-                finalTags.push(nameSlug);
-                if (globalOrder) finalTags.push(`${nameSlug}-${globalOrder}`);
+                // Base names
+                finalTags.push(nameSlug, nameSpec);
+
+                // Add Order (Clean and Special)
+                if (globalOrder) {
+                    finalTags.push(`${nameSlug}-${slugify(globalOrder)}`);
+                    finalTags.push(`${nameSpec}-${preserveSpecial(globalOrder)}`);
+                }
 
                 // Title + Name combinations
                 titles.forEach(t => {
-                    finalTags.push(`${t}-${nameSlug}`);
-                    finalTags.push(`${t}-${slugify(last)}`);
-                    if (globalOrder) finalTags.push(`${t}-${nameSlug}-${globalOrder}`);
+                    let tLow = t.toLowerCase();
+                    finalTags.push(`${tLow}-${nameSlug}`, `${tLow}-${nameSpec}`);
+                    finalTags.push(`${tLow}-${lastSlug}`);
+                    
+                    if (globalOrder) {
+                        finalTags.push(`${tLow}-${nameSlug}-${slugify(globalOrder)}`);
+                        finalTags.push(`${tLow}-${nameSpec}-${preserveSpecial(globalOrder)}`);
+                    }
                     
                     extras.forEach(ex => {
-                        finalTags.push(`${ex}-${t}-${nameSlug}`);
-                        finalTags.push(`${ex}-${nameSlug}`);
+                        let exLow = ex.toLowerCase();
+                        finalTags.push(`${exLow}-${tLow}-${nameSlug}`, `${exLow}-${tLow}-${nameSpec}`);
+                        finalTags.push(`${exLow}-${nameSlug}`, `${exLow}-${nameSpec}`);
                     });
                 });
 
-                // Laypeople / No Religious Title but has Academic Title
+                // Academic Title Only
                 if (mainTitle === 'none' && extras.length > 0) {
                     extras.forEach(ex => {
-                        finalTags.push(`${ex}-${nameSlug}`);
-                        finalTags.push(`${ex}-${slugify(last)}`);
+                        let exLow = ex.toLowerCase();
+                        finalTags.push(`${exLow}-${nameSlug}`, `${exLow}-${nameSpec}`);
+                        finalTags.push(`${exLow}-${lastSlug}`);
                     });
                 }
             });
 
-            let uniqueTags = [...new Set(finalTags)];
+            // Cleanup: remove duplicates and empty strings
+            let uniqueTags = [...new Set(finalTags.filter(t => t && t !== '-'))];
             document.getElementById('result').value = uniqueTags.join(', ');
             document.getElementById('tagCount').innerText = 'Tags Generated: ' + uniqueTags.length;
         });
