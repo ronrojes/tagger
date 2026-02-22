@@ -137,14 +137,14 @@
                 let lastSlug = slugify(last);
 
                 let titles = [];
-                if (mainTitle === 'priest') titles = ['Father', 'Fr'];
-                else if (mainTitle === 'nun') titles = ['Sister', 'Sr'];
-                else if (mainTitle === 'mother') titles = ['Mother', 'Mo'];
-                else if (mainTitle === 'deacon') titles = ['Deacon', 'Dcn'];
-                else if (mainTitle === 'msgr') titles = ['Monsignor', 'Msgr'];
+                if (mainTitle === 'priest') titles = ['Father', 'Fr', 'Fr.'];
+                else if (mainTitle === 'nun') titles = ['Sister', 'Sr', 'Sr.'];
+                else if (mainTitle === 'mother') titles = ['Mother', 'Mo', 'Mo.'];
+                else if (mainTitle === 'deacon') titles = ['Deacon', 'Dcn', 'Dcn.'];
+                else if (mainTitle === 'msgr') titles = ['Monsignor', 'Msgr', 'Msgr.'];
                 else if (mainTitle === 'pastor') titles = ['Pastor'];
-                else if (mainTitle === 'bishop') titles = ['Bishop', 'Bp'];
-                else if (mainTitle === 'saint') titles = ['Saint', 'St'];
+                else if (mainTitle === 'bishop') titles = ['Bishop', 'Bp', 'Bp.'];
+                else if (mainTitle === 'saint') titles = ['Saint', 'St', 'St.'];
 
                 let extras = [];
                 if (extraTitle === 'dr') extras = ['Dr', 'Doctor'];
