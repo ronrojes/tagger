@@ -147,7 +147,7 @@
                 else if (mainTitle === 'saint') titles = ['Saint', 'St', 'St.'];
 
                 let extras = [];
-                if (extraTitle === 'dr') extras = ['Dr', 'Doctor'];
+                if (extraTitle === 'dr') extras = ['Dr', 'Doctor', 'Dr.'];
                 else if (extraTitle === 'churchdoc') extras = ['Doctor-of-the-Church'];
 
                 // Base names
@@ -162,7 +162,7 @@
                 // Title + Name combinations
                 titles.forEach(t => {
                     let tLow = t.toLowerCase();
-                    finalTags.push(`${tLow}-${nameSlug}`, `${tLow}-${nameSpec}`);
+                    finalTags.push(`${tLow}-${nameSlug}`,`${tLow}-${nameSpec}`);
                     finalTags.push(`${tLow}-${lastSlug}`);
                     
                     if (globalOrder) {
@@ -172,8 +172,8 @@
                     
                     extras.forEach(ex => {
                         let exLow = ex.toLowerCase();
-                        finalTags.push(`${exLow}-${tLow}-${nameSlug}`, `${exLow}-${tLow}-${nameSpec}`);
-                        finalTags.push(`${exLow}-${nameSlug}`, `${exLow}-${nameSpec}`);
+                        finalTags.push(`${exLow}-${tLow}-${nameSlug}`,`${exLow}-${tLow}-${nameSpec}`);
+                        finalTags.push(`${exLow}-${nameSlug}`,`${exLow}-${nameSpec}`);
                     });
                 });
 
@@ -181,7 +181,7 @@
                 if (mainTitle === 'none' && extras.length > 0) {
                     extras.forEach(ex => {
                         let exLow = ex.toLowerCase();
-                        finalTags.push(`${exLow}-${nameSlug}`, `${exLow}-${nameSpec}`);
+                        finalTags.push(`${exLow}-${nameSlug}`,`${exLow}-${nameSpec}`);
                         finalTags.push(`${exLow}-${lastSlug}`);
                     });
                 }
@@ -189,7 +189,7 @@
 
             // Cleanup: remove duplicates and empty strings
             let uniqueTags = [...new Set(finalTags.filter(t => t && t !== '-'))];
-            document.getElementById('result').value = uniqueTags.join(', ');
+            document.getElementById('result').value = uniqueTags.join(',');
             document.getElementById('tagCount').innerText = 'Tags Generated: ' + uniqueTags.length;
         });
 
