@@ -2,44 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catholic Tag Master v4.0 (Enhanced)</title>
+    <title>Catholic Tag Master v5.5</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f4f8; color: #2d3436; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #f0f4f8; color: #2d3436; line-height: 1.4; }
         .container { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         h2 { color: #2c3e50; border-bottom: 3px solid #f1c40f; padding-bottom: 10px; margin-top: 0; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
-        label { font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 5px; color: #636e72; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: 0.2s; }
-        input:focus, textarea:focus { border-color: #0984e3; outline: none; background: #fff; }
+        .section-label { font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 5px; color: #636e72; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-row { display: flex; gap: 20px; margin-bottom: 15px; }
+        .form-row > div { flex: 1; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: border 0.2s; }
+        input:focus, textarea:focus, select:focus { border-color: #0984e3; outline: none; }
+        .topic-box { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; }
+        .vatican-wrap { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e0e0e0; }
+        .vatican-wrap input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+        .vatican-wrap label { margin: 0; cursor: pointer; font-weight: bold; color: #2d3436; font-size: 14px; }
         .btn-group { display: flex; gap: 10px; margin-top: 20px; }
         button { flex: 1; padding: 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; }
         #btnGen { background: #0984e3; color: white; }
         #btnCopy { background: #00b894; color: white; }
         #btnClear { background: #d63031; color: white; max-width: 130px; }
-        button:hover { opacity: 0.8; transform: translateY(-1px); }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
         .stats { font-size: 0.8em; font-weight: bold; color: #0984e3; margin-bottom: 5px; text-align: right; }
-        #result { background: #fdf2f2; color: #d63031; font-family: 'Courier New', monospace; border: 2px dashed #fab1a0; font-weight: bold; }
-        .topic-box { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; }
+        #result { background: #fdf2f2; color: #d63031; font-family: 'Courier New', monospace; border: 2px dashed #fab1a0; font-weight: bold; resize: vertical; }
+        hr { margin: 25px 0; border: 0; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Catholic Media Tag Master v4.0</h2>
+    <h2>Catholic Media Tag Master v5.5</h2>
 
     <div class="form-row">
-        <div><label>Program Name</label><input type="text" id="program" placeholder="e.g. Life of Prayer?"></div>
-        <div><label>Episode Title</label><input type="text" id="episode" placeholder="e.g. Mary's "Yes""></div>
+        <div>
+            <label class="section-label">Program Name</label>
+            <input type="text" id="program" placeholder="e.g. Life of Prayer">
+        </div>
+        <div>
+            <label class="section-label">Episode Title</label>
+            <input type="text" id="episode" placeholder="e.g. The Rosary">
+        </div>
     </div>
 
     <div class="topic-box">
-        <label>Additional Topics / Subjects (Comma separated)</label>
-        <input type="text" id="extraTopics" placeholder="e.g. Lent/Easter, St. Paul, Mercy!">
+        <label class="section-label">Liturgical Occasion</label>
+        <select id="liturgicalEvent">
+            <option value="none">-- Select Event (Optional) --</option>
+            <option value="ash_wednesday">Ash Wednesday</option>
+            <option value="lent">Lent</option>
+            <option value="palm_sunday">Palm Sunday</option>
+            <option value="maundy_thursday">Maundy Thursday</option>
+            <option value="good_friday">Good Friday</option>
+            <option value="holy_saturday">Holy Saturday</option>
+            <option value="easter_sunday">Easter Sunday</option>
+            <option value="divine_mercy">Divine Mercy Sunday</option>
+            <option value="ascension">Ascension of the Lord</option>
+            <option value="pentecost">Pentecost Sunday</option>
+            <option value="advent">Advent Season</option>
+            <option value="christmas">Christmas Day</option>
+            <option value="epiphany">Epiphany of the Lord</option>
+        </select>
+
+        <div class="vatican-wrap">
+            <input type="checkbox" id="vaticanCheck">
+            <label for="vaticanCheck">Include Vatican / Holy See Tags</label>
+        </div>
+    </div>
+
+    <div class="topic-box">
+        <label class="section-label">Additional Topics (Comma separated)</label>
+        <input type="text" id="extraTopics" placeholder="e.g. Mercy, Prayer">
     </div>
 
     <div class="form-row">
         <div>
-            <label>Religious Title</label>
+            <label class="section-label">Religious Title</label>
             <select id="mainTitle">
                 <option value="none">Layperson (No Title)</option>
                 <option value="priest">Priest (Father / Fr)</option>
@@ -53,7 +89,7 @@
             </select>
         </div>
         <div>
-            <label>Academic / Professional</label>
+            <label class="section-label">Academic Title</label>
             <select id="extraTitle">
                 <option value="none">None</option>
                 <option value="dr">Doctor (Dr)</option>
@@ -62,11 +98,15 @@
         </div>
     </div>
 
-    <label>Names (One per line)</label>
-    <textarea id="bulkNames" rows="3" placeholder="Enter Full Name(s)"></textarea>
+    <div style="margin-bottom: 15px;">
+        <label class="section-label">Names (One per line)</label>
+        <textarea id="bulkNames" rows="3" placeholder="Enter Full Name(s)"></textarea>
+    </div>
 
-    <label>Religious Order</label>
-    <input type="text" id="order" placeholder="e.g. S.J., O.P.">
+    <div style="margin-bottom: 15px;">
+        <label class="section-label">Religious Order</label>
+        <input type="text" id="order" placeholder="e.g. S.J., O.P.">
+    </div>
 
     <div class="btn-group">
         <button id="btnClear">RESET ALL</button>
@@ -74,139 +114,133 @@
         <button id="btnCopy">COPY CLIPBOARD</button>
     </div>
 
-    <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
-    <div class="stats" id="tagCount">Tags: 0</div>
+    <hr>
+    
+    <div class="stats" id="tagCount">Tags Generated: 0</div>
     <textarea id="result" rows="8" readonly placeholder="Final tags appear here..."></textarea>
 </div>
 
 <script>
-    window.onload = function() {
-        const btnGen = document.getElementById('btnGen');
-        const btnClear = document.getElementById('btnClear');
-        const btnCopy = document.getElementById('btnCopy');
-
-        // Clean version (alphanumeric and hyphens only)
-        function slugify(text) {
-            return text.trim().toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^\w\-]+/g, '')
-                .replace(/\-\-+/g, '-');
-        }
-
-        // Special character version (keeps symbols, just replaces spaces with hyphens)
-        function preserveSpecial(text) {
-            return text.trim().toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/\-\-+/g, '-');
-        }
-
-        btnGen.addEventListener('click', function() {
-            const program = document.getElementById('program').value;
-            const episode = document.getElementById('episode').value;
-            const topics = document.getElementById('extraTopics').value.split(',');
-            const namesRaw = document.getElementById('bulkNames').value.split('\n');
-            const mainTitle = document.getElementById('mainTitle').value;
-            const extraTitle = document.getElementById('extraTitle').value;
-            const globalOrder = document.getElementById('order').value.trim();
-
-            let finalTags = [];
-
-            function addDualTags(val) {
-                if(!val.trim()) return;
-                finalTags.push(slugify(val));
-                finalTags.push(preserveSpecial(val));
-            }
-
-            // 1. Program & Episode
-            if (program) addDualTags(program);
-            if (episode) addDualTags(episode);
-
-            // 2. General Topics
-            topics.forEach(t => {
-                if(t.trim()) addDualTags(t);
-            });
-
-            // 3. Names Processing
-            namesRaw.forEach(nameLine => {
-                let name = nameLine.trim();
-                if (!name) return;
-
-                let nameSlug = slugify(name);
-                let nameSpec = preserveSpecial(name);
-                let last = name.split(" ").pop();
-                let lastSlug = slugify(last);
-
-                let titles = [];
-                if (mainTitle === 'priest') titles = ['Father', 'Fr', 'Fr.'];
-                else if (mainTitle === 'nun') titles = ['Sister', 'Sr', 'Sr.'];
-                else if (mainTitle === 'mother') titles = ['Mother', 'Mo', 'Mo.'];
-                else if (mainTitle === 'deacon') titles = ['Deacon', 'Dcn', 'Dcn.'];
-                else if (mainTitle === 'msgr') titles = ['Monsignor', 'Msgr', 'Msgr.'];
-                else if (mainTitle === 'pastor') titles = ['Pastor'];
-                else if (mainTitle === 'bishop') titles = ['Bishop', 'Bp', 'Bp.'];
-                else if (mainTitle === 'saint') titles = ['Saint', 'St', 'St.'];
-
-                let extras = [];
-                if (extraTitle === 'dr') extras = ['Dr', 'Doctor', 'Dr.'];
-                else if (extraTitle === 'churchdoc') extras = ['Doctor-of-the-Church'];
-
-                // Base names
-                finalTags.push(nameSlug, nameSpec);
-
-                // Add Order (Clean and Special)
-                if (globalOrder) {
-                    finalTags.push(`${nameSlug}-${slugify(globalOrder)}`);
-                    finalTags.push(`${nameSpec}-${preserveSpecial(globalOrder)}`);
-                }
-
-                // Title + Name combinations
-                titles.forEach(t => {
-                    let tLow = t.toLowerCase();
-                    finalTags.push(`${tLow}-${nameSlug}`,`${tLow}-${nameSpec}`);
-                    finalTags.push(`${tLow}-${lastSlug}`);
-                    
-                    if (globalOrder) {
-                        finalTags.push(`${tLow}-${nameSlug}-${slugify(globalOrder)}`);
-                        finalTags.push(`${tLow}-${nameSpec}-${preserveSpecial(globalOrder)}`);
-                    }
-                    
-                    extras.forEach(ex => {
-                        let exLow = ex.toLowerCase();
-                        finalTags.push(`${exLow}-${tLow}-${nameSlug}`,`${exLow}-${tLow}-${nameSpec}`);
-                        finalTags.push(`${exLow}-${nameSlug}`,`${exLow}-${nameSpec}`);
-                    });
-                });
-
-                // Academic Title Only
-                if (mainTitle === 'none' && extras.length > 0) {
-                    extras.forEach(ex => {
-                        let exLow = ex.toLowerCase();
-                        finalTags.push(`${exLow}-${nameSlug}`,`${exLow}-${nameSpec}`);
-                        finalTags.push(`${exLow}-${lastSlug}`);
-                    });
-                }
-            });
-
-            // Cleanup: remove duplicates and empty strings
-            let uniqueTags = [...new Set(finalTags.filter(t => t && t !== '-'))];
-            document.getElementById('result').value = uniqueTags.join(',');
-            document.getElementById('tagCount').innerText = 'Tags Generated: ' + uniqueTags.length;
-        });
-
-        btnClear.addEventListener('click', function() {
-            if(confirm("Clear all data for next video?")) {
-                location.reload();
-            }
-        });
-
-        btnCopy.addEventListener('click', function() {
-            let res = document.getElementById("result");
-            if(!res.value) return;
-            res.select();
-            document.execCommand("copy");
-            alert("Tags copied to clipboard!");
-        });
+    const litMap = {
+        ash_wednesday: ["Ash Wednesday", "Ashes", "Penance", "dust", "Lent", "Lenten season", "40 days of Lent", "forty days of lent"],
+        lent: ["Lent", "Lenten season", "40 days of Lent", "forty days of lent", "fasting and abstinence"],
+        palm_sunday: ["Palm Sunday", "Holy Week", "Hosanna", "Palms", "Lent", "Lenten season", "40 days of Lent", "forty days of lent"],
+        maundy_thursday: ["Maundy Thursday", "Holy Week", "Last Supper", "Holy Thursday", "Washing of the feet", "Triduum", "Lent", "Lenten season", "40 days of Lent", "forty days of lent"],
+        good_friday: ["Good Friday", "Holy Week", "Triduum", "crucifixion of Jesus", "Jesus death and resurrection", "Lent", "Lenten season", "40 days of Lent", "forty days of lent"],
+        holy_saturday: ["Holy Saturday", "Holy Week", "Easter Vigil", "Triduum", "Lent", "Lenten season", "40 days of Lent", "forty days of lent"],
+        easter_sunday: ["Easter Sunday", "Resurrection", "Holy Week", "Triduum", "Lent", "Lenten season", "40 days of Lent", "forty days of lent"],
+        divine_mercy: ["Divine Mercy Sunday", "St. Faustina", "Saint Faustina", "St Faustina", "Hour of Mercy", "Jesus I trust in You", "Mercy and Forgiveness", "Mercy Of God"],
+        ascension: ["Ascension of the Lord", "40 days after easter", "Forty days after easter", "Feast of the Ascension", "Ascension of Jesus", "Jesus ascends into heaven", "Solemnity of the Ascension"],
+        pentecost: ["Pentecost Sunday", "Holy Spirit", "Descent of the Holy Spirit", "Birthday of the Church", "Day of Pentecost", "Fifty days after Easter", "50 days after easter", "Trinity"],
+        advent: ["Advent Season", "Nativity", "Birth of Jesus", "Holy Family", "Christmas Season"],
+        christmas: ["Christmas Day", "Christmas Eve", "Advent Season", "Nativity", "Birth of Jesus", "Holy Family", "Christmas Season", "Manger"],
+        epiphany: ["Epiphany of the Lord", "Magi", "Three Kings", "Wise Men", "Star of Bethlehem", "Baptism of Christ", "Baptism of the Lord", "Baptism of Jesus", "John the Baptist", "Trinity"]
     };
+
+    const vaticanTags = ["Vatican City", "Holy See", "Pontiff", "Apostolic Palace", "Magisterium", "Roman Catholic Church", "Pope Leo IV", "Leo IV", "peters-basilica", "peter's-basilica", "saint-peters-basilica", "saint-peter's-basilica", "st-peters-basilica", "st-peter's-basilica", "st.-peters-basilica", "st.-peter's-basilica"];
+
+    function slugify(text) {
+        return text.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+    }
+
+    function preserveSpecial(text) {
+        return text.trim().toLowerCase().replace(/\s+/g, '-').replace(/\-\-+/g, '-');
+    }
+
+    document.getElementById('btnGen').addEventListener('click', function() {
+        let finalTags = [];
+        const add = (val) => { 
+            if(!val || !val.trim()) return;
+            finalTags.push(slugify(val), preserveSpecial(val));
+        };
+
+        add(document.getElementById('program').value);
+        add(document.getElementById('episode').value);
+        
+        const litVal = document.getElementById('liturgicalEvent').value;
+        if(litVal !== 'none' && litMap[litVal]) litMap[litVal].forEach(t => add(t));
+
+        if(document.getElementById('vaticanCheck').checked) vaticanTags.forEach(t => add(t));
+
+        document.getElementById('extraTopics').value.split(',').forEach(t => {
+            if(t.trim()) add(t.trim());
+        });
+
+        let extras = [];
+        let literalDr = false;
+        const extraTitleVal = document.getElementById('extraTitle').value;
+        if (extraTitleVal === 'dr') {
+            extras = ['Dr', 'Doctor'];
+            literalDr = true;
+        } else if (extraTitleVal === 'churchdoc') {
+            extras = ['Doctor-of-the-Church'];
+        }
+
+        const mainTitle = document.getElementById('mainTitle').value;
+        const order = document.getElementById('order').value.trim();
+        
+        document.getElementById('bulkNames').value.split('\n').forEach(line => {
+            let name = line.trim();
+            if(!name) return;
+            let slug = slugify(name);
+            let spec = preserveSpecial(name);
+            let last = name.split(" ").pop();
+            let lastSlug = slugify(last);
+
+            finalTags.push(slug, spec);
+            if(order) { add(`${name} ${order}`); }
+
+            let titles = [];
+            if (mainTitle === 'priest') titles = ['Father', 'Fr', 'Fr.'];
+            else if (mainTitle === 'nun') titles = ['Sister', 'Sr', 'Sr.'];
+            else if (mainTitle === 'mother') titles = ['Mother', 'Mo', 'Mo.'];
+            else if (mainTitle === 'deacon') titles = ['Deacon', 'Dcn', 'Dcn.'];
+            else if (mainTitle === 'msgr') titles = ['Monsignor', 'Msgr', 'Msgr.'];
+            else if (mainTitle === 'pastor') titles = ['Pastor'];
+            else if (mainTitle === 'bishop') titles = ['Bishop', 'Bp', 'Bp.'];
+            else if (mainTitle === 'saint') titles = ['Saint', 'St', 'St.'];
+
+            titles.forEach(t => {
+                let tL = t.toLowerCase();
+                finalTags.push(`${tL}-${slug}`, `${tL}-${spec}`, `${tL}-${lastSlug}`);
+                
+                extras.forEach(ex => {
+                    let exL = slugify(ex);
+                    finalTags.push(`${exL}-${tL}-${slug}`, `${exL}-${tL}-${spec}`);
+                    finalTags.push(`${exL}-${slug}`, `${exL}-${spec}`);
+                    if(literalDr) {
+                        finalTags.push(`dr.-${tL}-${slug}`, `dr.-${slug}`);
+                    }
+                });
+            });
+
+            if (mainTitle === 'none' && extras.length > 0) {
+                extras.forEach(ex => {
+                    let exL = slugify(ex);
+                    finalTags.push(`${exL}-${slug}`, `${exL}-${spec}`, `${exL}-${lastSlug}`);
+                    if(literalDr) {
+                        finalTags.push(`dr.-${slug}`, `dr.-${lastSlug}`);
+                    }
+                });
+            }
+        });
+
+        let unique = [...new Set(finalTags.filter(t => t && t !== '-' && t !== ''))];
+        document.getElementById('result').value = unique.join(',');
+        document.getElementById('tagCount').innerText = 'Tags Generated: ' + unique.length;
+    });
+
+    document.getElementById('btnClear').addEventListener('click', () => { 
+        if(confirm("Reset all?")) location.reload(); 
+    });
+
+    document.getElementById('btnCopy').addEventListener('click', () => {
+        let res = document.getElementById("result");
+        if(!res.value) return;
+        res.select();
+        document.execCommand("copy");
+        alert("Copied to clipboard!");
+    });
 </script>
 </body>
 </html>
