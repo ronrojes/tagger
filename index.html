@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catholic Tag Master v5.5</title>
+    <title>Catholic Tag Master v5.5 (Enhanced)</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #f0f4f8; color: #2d3436; line-height: 1.4; }
         .container { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -80,12 +80,18 @@
                 <option value="none">Layperson (No Title)</option>
                 <option value="priest">Priest (Father / Fr)</option>
                 <option value="nun">Nun (Sister / Sr)</option>
-                <option value="mother">Mother Superior (Mother / Mo)</option>
+                <option value="mother">Mother Superior (Mother)</option>
                 <option value="deacon">Deacon (Dcn / Deacon)</option>
                 <option value="msgr">Monsignor (Msgr)</option>
-                <option value="pastor">Pastor</option>
                 <option value="bishop">Bishop (Bp / Bishop)</option>
+                <option value="archbishop">Archbishop</option>
+                <option value="cardinal">Cardinal</option>
+                <option value="pastor">Pastor</option>
                 <option value="saint">Saint (St)</option>
+                <option value="blessed">Blessed (Bl)</option>
+                <option value="venerable">Venerable (Ven)</option>
+                <option value="servant">Servant of God</option>
+                <option value="martyr">Martyr</option>
             </select>
         </div>
         <div>
@@ -93,6 +99,7 @@
             <select id="extraTitle">
                 <option value="none">None</option>
                 <option value="dr">Doctor (Dr)</option>
+                <option value="professor">Professor (Prof)</option>
                 <option value="churchdoc">Doctor of the Church</option>
             </select>
         </div>
@@ -137,7 +144,7 @@
         epiphany: ["Epiphany of the Lord", "Magi", "Three Kings", "Wise Men", "Star of Bethlehem", "Baptism of Christ", "Baptism of the Lord", "Baptism of Jesus", "John the Baptist", "Trinity"]
     };
 
-    const vaticanTags = ["Vatican City", "Holy See", "Pontiff", "Apostolic Palace", "Magisterium", "Roman Catholic Church", "Pope Leo IV", "Leo IV", "peters-basilica", "peter's-basilica", "saint-peters-basilica", "saint-peter's-basilica", "st-peters-basilica", "st-peter's-basilica", "st.-peters-basilica", "st.-peter's-basilica"];
+    const vaticanTags = ["Vatican City", "Holy See", "Pontiff", "Apostolic Palace", "Magisterium", "Roman Catholic Church", "Pope Leo IV", "Leo IV"];
 
     function slugify(text) {
         return text.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
@@ -166,63 +173,89 @@
             if(t.trim()) add(t.trim());
         });
 
-        let extras = [];
-        let literalDr = false;
+        const mainTitleVal = document.getElementById('mainTitle').value;
         const extraTitleVal = document.getElementById('extraTitle').value;
-        if (extraTitleVal === 'dr') {
-            extras = ['Dr', 'Doctor'];
-            literalDr = true;
-        } else if (extraTitleVal === 'churchdoc') {
-            extras = ['Doctor-of-the-Church'];
-        }
+        const orderRaw = document.getElementById('order').value.trim();
+        const orderSlug = slugify(orderRaw);
+        const orderSpec = preserveSpecial(orderRaw);
 
-        const mainTitle = document.getElementById('mainTitle').value;
-        const order = document.getElementById('order').value.trim();
-        
         document.getElementById('bulkNames').value.split('\n').forEach(line => {
             let name = line.trim();
             if(!name) return;
-            let slug = slugify(name);
-            let spec = preserveSpecial(name);
+            let nSlug = slugify(name);
+            let nSpec = preserveSpecial(name);
             let last = name.split(" ").pop();
             let lastSlug = slugify(last);
+            let lastSpec = preserveSpecial(last);
 
-            finalTags.push(slug, spec);
-            if(order) { add(`${name} ${order}`); }
+            // 1. Base Name with Order Check
+            if (orderRaw) {
+                finalTags.push(`${nSlug}-${orderSlug}`, `${nSpec}-${orderSpec}`);
+            } else {
+                finalTags.push(nSlug, nSpec);
+            }
 
+            // 2. Titles Setup
             let titles = [];
-            if (mainTitle === 'priest') titles = ['Father', 'Fr', 'Fr.'];
-            else if (mainTitle === 'nun') titles = ['Sister', 'Sr', 'Sr.'];
-            else if (mainTitle === 'mother') titles = ['Mother', 'Mo', 'Mo.'];
-            else if (mainTitle === 'deacon') titles = ['Deacon', 'Dcn', 'Dcn.'];
-            else if (mainTitle === 'msgr') titles = ['Monsignor', 'Msgr', 'Msgr.'];
-            else if (mainTitle === 'pastor') titles = ['Pastor'];
-            else if (mainTitle === 'bishop') titles = ['Bishop', 'Bp', 'Bp.'];
-            else if (mainTitle === 'saint') titles = ['Saint', 'St', 'St.'];
+            if (mainTitleVal === 'priest') titles = ['father', 'fr', 'fr.'];
+            else if (mainTitleVal === 'nun') titles = ['sister', 'sr', 'sr.'];
+            else if (mainTitleVal === 'mother') titles = ['mother', 'mother-superior'];
+            else if (mainTitleVal === 'deacon') titles = ['deacon', 'dcn', 'dcn.'];
+            else if (mainTitleVal === 'msgr') titles = ['monsignor', 'msgr', 'msgr.'];
+            else if (mainTitleVal === 'pastor') titles = ['pastor'];
+            else if (mainTitleVal === 'bishop') titles = ['bishop', 'bp', 'bp.'];
+            else if (mainTitleVal === 'archbishop') titles = ['archbishop'];
+            else if (mainTitleVal === 'cardinal') titles = ['cardinal'];
+            else if (mainTitleVal === 'saint') titles = ['saint', 'st', 'st.'];
+            else if (mainTitleVal === 'blessed') titles = ['blessed', 'bl', 'bl.'];
+            else if (mainTitleVal === 'venerable') titles = ['venerable', 'ven', 'ven.'];
+            else if (mainTitleVal === 'servant') titles = ['servant-of-god'];
+            else if (mainTitleVal === 'martyr') titles = ['martyr'];
 
+            let extras = [];
+            if (extraTitleVal === 'dr') extras = ['doctor', 'dr', 'dr.'];
+            else if (extraTitleVal === 'professor') extras = ['professor', 'prof', 'prof.'];
+            else if (extraTitleVal === 'churchdoc') extras = ['doctor-of-the-church'];
+
+            // 3. Process Religious Titles
             titles.forEach(t => {
-                let tL = t.toLowerCase();
-                finalTags.push(`${tL}-${slug}`, `${tL}-${spec}`, `${tL}-${lastSlug}`);
+                let tSlug = slugify(t);
+                let tRaw = t.toLowerCase();
                 
-                extras.forEach(ex => {
-                    let exL = slugify(ex);
-                    finalTags.push(`${exL}-${tL}-${slug}`, `${exL}-${tL}-${spec}`);
-                    finalTags.push(`${exL}-${slug}`, `${exL}-${spec}`);
-                    if(literalDr) {
-                        finalTags.push(`dr.-${tL}-${slug}`, `dr.-${slug}`);
+                // We add BOTH nSlug (Ohara) and nSpec (O'hara) for BOTH tSlug and tRaw
+                if (orderRaw) {
+                    finalTags.push(`${tSlug}-${nSlug}-${orderSlug}`, `${tRaw}-${nSlug}-${orderSlug}`);
+                    finalTags.push(`${tSlug}-${nSpec}-${orderSpec}`, `${tRaw}-${nSpec}-${orderSpec}`);
+                    finalTags.push(`${tSlug}-${lastSlug}-${orderSlug}`, `${tRaw}-${lastSlug}-${orderSlug}`);
+                    finalTags.push(`${tSlug}-${lastSpec}-${orderSpec}`, `${tRaw}-${lastSpec}-${orderSpec}`);
+                } else {
+                    finalTags.push(`${tSlug}-${nSlug}`, `${tRaw}-${nSlug}`);
+                    finalTags.push(`${tSlug}-${nSpec}`, `${tRaw}-${nSpec}`);
+                    finalTags.push(`${tSlug}-${lastSlug}`, `${tRaw}-${lastSlug}`);
+                    finalTags.push(`${tSlug}-${lastSpec}`, `${tRaw}-${lastSpec}`);
+                }
+            });
+
+            // 4. Process Academic Titles
+            extras.forEach(ex => {
+                let exSlug = slugify(ex);
+                let exRaw = ex.toLowerCase();
+                
+                finalTags.push(`${exSlug}-${nSlug}`, `${exRaw}-${nSlug}`);
+                finalTags.push(`${exSlug}-${nSpec}`, `${exRaw}-${nSpec}`);
+                finalTags.push(`${exSlug}-${lastSlug}`, `${exRaw}-${lastSlug}`);
+                finalTags.push(`${exSlug}-${lastSpec}`, `${exRaw}-${lastSpec}`);
+                
+                titles.forEach(t => {
+                    let tSlug = slugify(t);
+                    let tRaw = t.toLowerCase();
+                    // Clean + Clean, Special + Special, and Clean + Special cross-over
+                    finalTags.push(`${exSlug}-${tSlug}-${nSlug}`, `${exRaw}-${tRaw}-${nSpec}`);
+                    if (orderRaw) {
+                        finalTags.push(`${exSlug}-${tSlug}-${nSlug}-${orderSlug}`, `${exRaw}-${tRaw}-${nSpec}-${orderSpec}`);
                     }
                 });
             });
-
-            if (mainTitle === 'none' && extras.length > 0) {
-                extras.forEach(ex => {
-                    let exL = slugify(ex);
-                    finalTags.push(`${exL}-${slug}`, `${exL}-${spec}`, `${exL}-${lastSlug}`);
-                    if(literalDr) {
-                        finalTags.push(`dr.-${slug}`, `dr.-${lastSlug}`);
-                    }
-                });
-            }
         });
 
         let unique = [...new Set(finalTags.filter(t => t && t !== '-' && t !== ''))];
@@ -231,7 +264,7 @@
     });
 
     document.getElementById('btnClear').addEventListener('click', () => { 
-        if(confirm("Reset all?")) location.reload(); 
+        if(confirm("Reset all data?")) location.reload(); 
     });
 
     document.getElementById('btnCopy').addEventListener('click', () => {
@@ -239,7 +272,7 @@
         if(!res.value) return;
         res.select();
         document.execCommand("copy");
-        alert("Copied to clipboard!");
+        alert("Tags copied to clipboard!");
     });
 </script>
 </body>
